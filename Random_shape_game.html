@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Random Shape Generator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 10px 20px;
+      background: #333;
+      color: white;
+    }
+
+    #controls {
+      padding: 10px 20px;
+      background: #f0f0f0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #canvas {
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .shape {
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Random Shape Generator</h1>
+  </header>
+
+  <div id="controls">
+    <button id="generateBtn">Generate Shape</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <div id="canvas"></div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const generateBtn = document.getElementById('generateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRandomColor() {
+      const r = getRandomInt(0, 255);
+      const g = getRandomInt(0, 255);
+      const b = getRandomInt(0, 255);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function createRandomShape() {
+      const shape = document.createElement('div');
+      shape.classList.add('shape');
+
+      const shapeType = ['circle', 'square', 'rectangle'][getRandomInt(0, 2)];
+      const maxWidth = canvas.clientWidth;
+      const maxHeight = canvas.clientHeight;
+
+      let width = getRandomInt(30, 150);
+      let height = shapeType === 'rectangle' ? getRandomInt(30, 150) : width;
+
+      const x = getRandomInt(0, Math.max(0, maxWidth - width));
+      const y = getRandomInt(0, Math.max(0, maxHeight - height));
+
+      shape.style.width = width + 'px';
+      shape.style.height = height + 'px';
+      shape.style.left = x + 'px';
+      shape.style.top = y + 'px';
+      shape.style.backgroundColor = getRandomColor();
+
+      if (shapeType === 'circle') {
+        shape.style.borderRadius = '50%';
+      } else {
+        shape.style.borderRadius = '0';
+      }
+
+      canvas.appendChild(shape);
+    }
+
+    generateBtn.addEventListener('click', createRandomShape);
+
+    clearBtn.addEventListener('click', () => {
+      canvas.innerHTML = '';
+    });
+
+    // Optional: generate one shape on load
+    // createRandomShape();
+  </script>
+</body>
+</html>
