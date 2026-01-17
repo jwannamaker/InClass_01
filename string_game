@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Combination Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .info {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info strong {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .results {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .results::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .results::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .results::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .combo {
+            display: inline-block;
+            background: white;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        .combo:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Combination Generator</h1>
+        <p class="subtitle">Generate all possible combinations of your string!</p>
+
+        <div class="input-group">
+            <input type="text" id="inputString" maxlength="5" placeholder="Enter up to 5 characters">
+            <button onclick="generateCombinations()">Generate</button>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+        <div id="info" class="info hidden"></div>
+        <div id="results" class="results hidden"></div>
+    </div>
+
+    <script>
+        function generateCombinations() {
+            const input = document.getElementById('inputString').value;
+            const errorEl = document.getElementById('error');
+            const infoEl = document.getElementById('info');
+            const resultsEl = document.getElementById('results');
+
+            errorEl.classList.add('hidden');
+            infoEl.classList.add('hidden');
+            resultsEl.classList.add('hidden');
+
+            if (!input) {
+                errorEl.textContent = 'Please enter a string!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (input.length > 5) {
+                errorEl.textContent = 'String must be 5 characters or less!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const combinations = getAllCombinations(input);
+            
+            infoEl.innerHTML = `Found <strong>${combinations.length}</strong> unique combinations!`;
+            infoEl.classList.remove('hidden');
+
+            resultsEl.innerHTML = combinations.map(combo => 
+                `<span class="combo">${combo || '(empty)'}</span>`
+            ).join('');
+            resultsEl.classList.remove('hidden');
+        }
+
+        function getAllCombinations(str) {
+            const results = new Set();
+            
+            function permute(arr, current = []) {
+                if (current.length > 0) {
+                    results.add(current.join(''));
+                }
+                
+                for (let i = 0; i < arr.length; i++) {
+                    const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
+                    permute(remaining, current.concat(arr[i]));
+                }
+            }
+
+            permute(str.split(''));
+            
+            return Array.from(results).sort((a, b) => {
+                if (a.length !== b.length) return a.length - b.length;
+                return a.localeCompare(b);
+            });
+        }
+
+        document.getElementById('inputString').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateCombinations();
+            }
+        });
+    </script>
+</body>
+</html>
