@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 400px; margin: auto; }
+        input { padding: 10px; margin: 5px 0; width: 100px; }
+        button { padding: 10px 15px; margin-top: 10px; }
+        #randomNumberDisplay { margin-top: 20px; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Generate a Random Number</h2>
+        <div>
+            <label for="minVal">Minimum Value:</label>
+            <input type="number" id="minVal" value="1">
+        </div>
+        <div>
+            <label for="maxVal">Maximum Value:</label>
+            <input type="number" id="maxVal" value="100">
+        </div>
+        <button onclick="generateRandomNumber()">Generate</button>
+        <div id="randomNumberDisplay">
+            Click the button to generate
+        </div>
+    </div>
+
+    <script>
+        function generateRandomNumber() {
+            // 1. Get user input values and convert them to integers
+            const minInput = document.getElementById('minVal');
+            const maxInput = document.getElementById('maxVal');
+            const min = parseInt(minInput.value);
+            const max = parseInt(maxInput.value);
+
+            // 2. Validate inputs
+            if (isNaN(min) || isNaN(max) || min >= max) {
+                document.getElementById('randomNumberDisplay').textContent = "Please enter valid minimum and maximum values (min < max).";
+                return;
+            }
+
+            // 3. Generate a random integer within the range (inclusive of min and max)
+            // The formula is Math.floor(Math.random() * (max - min + 1)) + min
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
+            // 4. Display the result
+            document.getElementById('randomNumberDisplay').textContent = "Generated Number: " + randomNumber;
+        }
+    </script>
+</body>
+</html>
