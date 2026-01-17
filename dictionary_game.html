@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dictionary Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #definition {
+            margin-top: 20px;
+            padding: 10px;
+            background: #eef;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dictionary Game</h1>
+
+    <input id="wordInput" type="text" placeholder="Enter a word" />
+    <button onclick="lookupWord()">Get Definition</button>
+
+    <div id="definition"></div>
+</div>
+
+<script>
+    async function lookupWord() {
+        const wordInput = document.getElementById("wordInput");
+        const definitionDiv = document.getElementById("definition");
+        const word = wordInput.value.trim();
+
+        definitionDiv.textContent = "";
+
+        if (word === "") {
+            definitionDiv.innerHTML = "<span class='error'>Please enter a word.</span>";
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Word not found");
+            }
+
+            const data = await response.json();
+
+            const meaning = data[0].meanings[0];
+            const definition = meaning.definitions[0].definition;
+
+            definitionDiv.innerHTML = `<strong>Definition:</strong> ${definition}`;
+        } catch (error) {
+            definitionDiv.innerHTML =
+                "<span class='error'>Definition not found. Try another word.</span>";
+        }
+    }
+</script>
+
+</body>
+</html>
